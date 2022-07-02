@@ -116,6 +116,52 @@ void main() {
           verify: (_) {
             verify(() => mockPostRepository.fetchPosts()).called(1);
           });
+
+      blocTest<PostBloc, PostState>(
+          'emit successful status and reaches max posts when 0 additional posts are fetched',
+          setUp: () {
+            when(() => mockPostRepository.fetchPosts(startIndex: any()))
+                .thenAnswer((_) async => []);
+          },
+          build: () => sut,
+          seed: () =>
+              const PostState(postStatus: PostStatus.success, posts: mockPosts),
+          act: (bloc) {
+            bloc.add(PostFetched());
+          },
+          expect: () => <PostState>[
+                const PostState(
+                    postStatus: PostStatus.success,
+                    posts: mockPosts,
+                    hasReachedMax: true)
+              ],
+          verify: (bloc) {
+            verify(() => mockPostRepository.fetchPosts(
+                startIndex: bloc.state.posts.length)).called(1);
+          });
+
+      blocTest<PostBloc, PostState>(
+          'emit successful status and does not reach max posts when additional posts are fetched',
+          setUp: () {
+            when(() => mockPostRepository.fetchPosts(startIndex: any()))
+                .thenAnswer((_) async => extraMockPosts);
+          },
+          build: () => sut,
+          seed: () =>
+              const PostState(postStatus: PostStatus.success, posts: mockPosts),
+          act: (bloc) {
+            bloc.add(PostFetched());
+          },
+          expect: () => <PostState>[
+                const PostState(
+                    postStatus: PostStatus.success,
+                    posts: [...mockPosts, ...extraMockPosts],
+                    hasReachedMax: false)
+              ],
+          verify: (bloc) {
+            verify(() => mockPostRepository.fetchPosts(startIndex: 1))
+                .called(1);
+          });
     });
   });
 }
