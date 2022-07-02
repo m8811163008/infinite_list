@@ -12,7 +12,7 @@ class Post extends Equatable {
   @JsonKey(name: 'body')
   final String body;
 
-  Post({required this.id, required this.title, required this.body});
+  const Post({required this.id, required this.title, required this.body});
 
   factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
 
