@@ -34,6 +34,10 @@ void main() {
 
       blocTest<PostBloc, PostState>(
           'emits successful status when repository fetches initial posts',
+          setUp: () {
+            when(() => mockPostRepository.fetchPosts())
+                .thenAnswer((_) async => mockPosts);
+          },
           build: () => sut,
           act: (bloc) {
             bloc.add(PostFetched());
