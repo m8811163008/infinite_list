@@ -31,6 +31,22 @@ void main() {
         act: (bloc) => bloc.add(PostFetched()),
         expect: () => <PostState>[],
       );
+
+      blocTest<PostBloc, PostState>(
+          'emits successful status when repository fetches initial posts',
+          build: () => sut,
+          act: (bloc) {
+            bloc.add(PostFetched());
+          },
+          expect: () => <PostState>[
+                const PostState(
+                    postStatus: PostStatus.success,
+                    posts: mockPosts,
+                    hasReachedMax: false),
+              ],
+          verify: (_) {
+            verify(() => mockPostRepository.fetchPosts()).called(1);
+          });
     });
   });
 }
