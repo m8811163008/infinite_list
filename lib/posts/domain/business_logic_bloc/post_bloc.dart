@@ -1,14 +1,19 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:infinit_list/posts/domain/models/post.dart';
+import 'package:infinit_list/posts/domain/repository.dart';
 
 part 'post_event.dart';
 part 'post_state.dart';
 
 class PostBloc extends Bloc<PostEvent, PostState> {
-  PostBloc() : super(const PostState()) {
-    on<PostEvent>((event, emit) {
-      // TODO: implement event handler
-    });
+  final PostRepository postRepository;
+
+  PostBloc(this.postRepository) : super(const PostState()) {
+    on<PostFetched>(_onPostFetched);
+  }
+
+  void _onPostFetched(PostFetched event, Emitter<PostState> emit) {
+    if (state.hasReachedMax) return;
   }
 }

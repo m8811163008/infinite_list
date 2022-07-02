@@ -1,3 +1,4 @@
+import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:infinit_list/posts/domain/business_logic_bloc/post_bloc.dart';
 import 'package:infinit_list/posts/domain/models/post.dart';
@@ -21,6 +22,15 @@ void main() {
 
     test('initial state is PostState', () {
       expect(sut.state, const PostState());
+    });
+    group('PostFetched', () {
+      blocTest<PostBloc, PostState>(
+        'emits nothing when posts has reached maximum amount',
+        build: () => sut,
+        seed: () => const PostState(hasReachedMax: true),
+        act: (bloc) => bloc.add(PostFetched()),
+        expect: () => <PostState>[],
+      );
     });
   });
 }
